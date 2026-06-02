@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import { TOTAL_MIXABLE, BASE_COLORS } from '@/lib/game-data'
-import Image from 'next/image'
 
 interface Drawing {
   id: string
@@ -38,6 +37,25 @@ export default function AdminClient({ adminName, children }: Props) {
   const supabase = createClient()
   const [activeTab, setActiveTab] = useState(0)
   const [lightbox, setLightbox] = useState<string | null>(null)
+  const [resetModal, setResetModal] = useState<{ open: boolean; childId: string; childName: string }>({ open: false, childId: '', childName: '' })
+  const [resetting, setResetting] = useState(false)
+  const [childrenData, setChildrenData] = useState(children)
+
+  async function handleReset() {
+    setResetting(true)
+    await supabase
+      .from('discovered_colors')
+      .delete()
+      .eq('user_id', resetModal.childId)
+    // Refresh local state
+    setChildrenData(prev => prev.map(c =>
+      c.id === resetModal.childId
+        ? { ...c, discovered: [], discoveredCount: 0 }
+        : c
+    ))
+    setResetting(false)
+    setResetModal({ open: false, childId: '', childName: '' })
+  }
 
   async function handleLogout() {
     await supabase.auth.signOut()
@@ -45,7 +63,7 @@ export default function AdminClient({ adminName, children }: Props) {
     router.refresh()
   }
 
-  const child = children[activeTab]
+  const child = childrenData[activeTab]
 
   const mixedFound = child
     ? child.discovered.filter(d => !BASE_COLORS.find(b => b.hex === d.color_hex)).length
@@ -80,7 +98,7 @@ export default function AdminClient({ adminName, children }: Props) {
 
         {/* TABS */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
-          {children.map((c, i) => (
+          {childrenData.map((c, i) => (
             <button key={c.id} onClick={() => setActiveTab(i)}
               style={{
                 fontFamily: 'Baloo 2, cursive',
@@ -117,9 +135,17 @@ export default function AdminClient({ adminName, children }: Props) {
 
             {/* Progress bar */}
             <div style={{ padding: '16px 24px', borderBottom: '2px solid #f0e6d2' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <span style={{ fontFamily: 'Baloo 2, cursive', fontWeight: 700, color: '#3d2b1f', fontSize: '0.95rem' }}>🧪 Progreso de mezclas</span>
-                <span style={{ fontWeight: 700, color: '#7a5c4a', fontSize: '0.88rem' }}>{mixedFound} / {TOTAL_MIXABLE}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontWeight: 700, color: '#7a5c4a', fontSize: '0.88rem' }}>{mixedFound} / {TOTAL_MIXABLE}</span>
+                  <button
+                    onClick={() => setResetModal({ open: true, childId: child.id, childName: child.display_name })}
+                    style={{ background: '#fff5f5', border: '2px solid #ffb3b3', borderRadius: 50, padding: '5px 14px', fontFamily: 'Nunito, sans-serif', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', color: '#cc4444', display: 'flex', alignItems: 'center', gap: 5 }}
+                  >
+                    🔄 Resetear colores
+                  </button>
+                </div>
               </div>
               <div style={{ background: '#f0e8d6', borderRadius: 50, height: 14 }}>
                 <div style={{ height: '100%', borderRadius: 50, background: 'linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f)', width: `${pct}%`, transition: 'width 0.5s' }} />
@@ -187,7 +213,40 @@ export default function AdminClient({ adminName, children }: Props) {
         )}
       </div>
 
-      {/* LIGHTBOX */}
+      {/* RESET MODAL */}
+      {resetModal.open && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: 20 }}>
+          <div style={{ background: 'white', borderRadius: 24, padding: 32, maxWidth: 400, width: '100%', boxShadow: '0 8px 0 #e2d5c3, 0 12px 32px rgba(0,0,0,0.2)', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.8rem', marginBottom: 10 }}>🔄</div>
+            <h2 style={{ fontFamily: 'Baloo 2, cursive', fontWeight: 800, fontSize: '1.4rem', color: '#3d2b1f', marginBottom: 10 }}>
+              ¿Resetear colores de {resetModal.childName}?
+            </h2>
+            <p style={{ color: '#7a5c4a', fontSize: '0.92rem', fontWeight: 600, marginBottom: 6, lineHeight: 1.5 }}>
+              Todos los colores descubiertos se van a <strong>bloquear nuevamente</strong> para que los redescubra desde cero.
+            </p>
+            <p style={{ color: '#43a047', fontSize: '0.88rem', fontWeight: 700, marginBottom: 24, background: '#f0fff0', borderRadius: 10, padding: '8px 14px', border: '1px solid #c8e6c9' }}>
+              ✅ Los dibujos guardados no se borran
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button
+                onClick={() => setResetModal({ open: false, childId: '', childName: '' })}
+                style={{ background: 'transparent', border: '2px solid #d4c4a8', borderRadius: 50, padding: '10px 22px', fontFamily: 'Nunito, sans-serif', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer', color: '#7a5c4a' }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleReset}
+                disabled={resetting}
+                style={{ background: 'linear-gradient(135deg, #ff6b6b, #ff5252)', color: 'white', border: 'none', borderRadius: 50, padding: '10px 22px', fontFamily: 'Baloo 2, cursive', fontSize: '0.95rem', fontWeight: 700, cursor: resetting ? 'not-allowed' : 'pointer', boxShadow: '0 4px 0 #cc2222', opacity: resetting ? 0.7 : 1 }}
+              >
+                {resetting ? '⏳ Reseteando...' : '🔄 Sí, resetear'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* LIGHTBOX */}}
       {lightbox && (
         <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: 20, cursor: 'pointer' }}>
           <img src={lightbox} alt="Dibujo" style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 16, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()} />
