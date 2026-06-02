@@ -285,32 +285,20 @@ export default function GameClient({ userId, displayName, initialDiscovered }: P
           </div>
         </div>
 
-        {/* DISCOVERED */}
+        {/* DISCOVERED - COLOR WHEEL */}
         <div style={card}>
           <div style={sectionTitle}>🌈 Mis colores</div>
-          {/* Progress */}
           <div style={{ background: '#f0e8d6', borderRadius: 50, height: 10, marginBottom: 4 }}>
             <div style={{ height: '100%', borderRadius: 50, background: 'linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f)', width: `${Math.round((mixedFound / TOTAL_MIXABLE) * 100)}%`, transition: 'width 0.5s' }} />
           </div>
           <p style={{ fontSize: '0.75rem', color: '#7a5c4a', fontWeight: 700, textAlign: 'right', marginBottom: 10 }}>
             {mixedFound} / {TOTAL_MIXABLE} descubiertos
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, maxHeight: 220, overflowY: 'auto' }}>
-            {BASE_COLORS.map(c => (
-              <div key={c.hex} onClick={() => { setCurrentPaint(c.hex); setTool('brush') }}
-                style={{ ...paletteItem, background: c.hex, border: currentPaint === c.hex ? '2px solid #3d2b1f' : c.hex === '#FFFFFF' ? '2px solid #ccc' : '2px solid white', boxShadow: currentPaint === c.hex ? '0 0 0 2px white, 0 0 0 4px #3d2b1f' : '0 3px 0 rgba(0,0,0,0.12)' }}>
-                <span style={paletteLabel}>{c.name}</span>
-              </div>
-            ))}
-            {RECIPES.map(r => (
-              discovered.has(r.result)
-                ? <div key={r.result} onClick={() => { setCurrentPaint(r.result); setTool('brush') }}
-                    style={{ ...paletteItem, background: r.result, border: currentPaint === r.result ? '2px solid #3d2b1f' : '2px solid white', boxShadow: currentPaint === r.result ? '0 0 0 2px white, 0 0 0 4px #3d2b1f' : '0 3px 0 rgba(0,0,0,0.12)' }}>
-                    <span style={paletteLabel}>{r.emoji} {r.name}</span>
-                  </div>
-                : <div key={r.result} style={{ aspectRatio: '1', background: '#f0eae0', border: '2px dashed #d4c4a8', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', color: '#c4b08a' }}>🔒</div>
-            ))}
-          </div>
+          <ColorWheel
+            discovered={discovered}
+            currentPaint={currentPaint}
+            onSelect={(hex) => { setCurrentPaint(hex); setTool('brush') }}
+          />
         </div>
 
         {/* CANVAS */}
@@ -394,3 +382,197 @@ const clearBtn: React.CSSProperties = { background: 'transparent', border: '2px 
 const paletteItem: React.CSSProperties = { aspectRatio: '1', borderRadius: 12, position: 'relative', cursor: 'pointer', overflow: 'hidden', transition: 'transform 0.15s, box-shadow 0.15s' }
 const paletteLabel: React.CSSProperties = { position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.35)', color: 'white', fontSize: '0.6rem', fontWeight: 700, textAlign: 'center', padding: '2px 1px', lineHeight: 1.2 }
 const toolBtn: React.CSSProperties = { background: '#faf5ee', border: '2px solid #d4c4a8', borderRadius: 10, padding: '5px 10px', fontFamily: 'Nunito, sans-serif', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', color: '#5a3e2b' }
+
+// ========== COLOR WHEEL COMPONENT ==========
+interface WheelProps {
+  discovered: Set<string>
+  currentPaint: string | null
+  onSelect: (hex: string) => void
+}
+
+function ColorWheel({ discovered, currentPaint, onSelect }: WheelProps) {
+  const [hovered, setHovered] = useState<string | null>(null)
+  const size = 280
+  const cx = size / 2
+  const cy = size / 2
+  const outerR = 128
+  const innerR = 54
+  const total = RECIPES.length // 15 slices
+
+  function polarToXY(angleDeg: number, r: number) {
+    const rad = (angleDeg - 90) * (Math.PI / 180)
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) }
+  }
+
+  function slicePath(i: number, rInner: number, rOuter: number, expand = 0) {
+    const sliceAngle = 360 / total
+    const startAngle = i * sliceAngle
+    const endAngle = startAngle + sliceAngle
+    const r1 = rInner - expand
+    const r2 = rOuter + expand
+    const p1 = polarToXY(startAngle, r1)
+    const p2 = polarToXY(startAngle, r2)
+    const p3 = polarToXY(endAngle, r2)
+    const p4 = polarToXY(endAngle, r1)
+    const largeArc = sliceAngle > 180 ? 1 : 0
+    return [
+      `M ${p1.x} ${p1.y}`,
+      `L ${p2.x} ${p2.y}`,
+      `A ${r2} ${r2} 0 ${largeArc} 1 ${p3.x} ${p3.y}`,
+      `L ${p4.x} ${p4.y}`,
+      `A ${r1} ${r1} 0 ${largeArc} 0 ${p1.x} ${p1.y}`,
+      'Z'
+    ].join(' ')
+  }
+
+  function labelPos(i: number) {
+    const sliceAngle = 360 / total
+    const midAngle = i * sliceAngle + sliceAngle / 2
+    const r = (innerR + outerR) / 2
+    return polarToXY(midAngle, r)
+  }
+
+  // Base color positions for center ring (5 evenly spaced)
+  function baseSlicePath(i: number, expand = 0) {
+    const sliceAngle = 360 / 5
+    const startAngle = i * sliceAngle
+    const endAngle = startAngle + sliceAngle
+    const r1 = 10 - expand
+    const r2 = innerR - 4 + expand
+    const p1 = polarToXY(startAngle, r1)
+    const p2 = polarToXY(startAngle, r2)
+    const p3 = polarToXY(endAngle, r2)
+    const p4 = polarToXY(endAngle, r1)
+    const largeArc = sliceAngle > 180 ? 1 : 0
+    return [
+      `M ${p1.x} ${p1.y}`,
+      `L ${p2.x} ${p2.y}`,
+      `A ${r2} ${r2} 0 ${largeArc} 1 ${p3.x} ${p3.y}`,
+      `L ${p4.x} ${p4.y}`,
+      `A ${r1} ${r1} 0 ${largeArc} 0 ${p1.x} ${p1.y}`,
+      'Z'
+    ].join(' ')
+  }
+
+  const hoveredData = hovered
+    ? (RECIPES.find(r => r.result === hovered) ?? BASE_COLORS.find(b => b.hex === hovered))
+    : null
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+      <div style={{ position: 'relative', width: size, height: size }}>
+        <svg width={size} height={size} style={{ overflow: 'visible' }}>
+          {/* Outer ring - 15 recipe colors */}
+          {RECIPES.map((r, i) => {
+            const isDisc = discovered.has(r.result)
+            const isHov = hovered === r.result
+            const isSel = currentPaint === r.result
+            const expand = isHov ? 6 : isSel ? 4 : 0
+            return (
+              <g key={r.result}
+                onClick={() => isDisc && onSelect(r.result)}
+                onMouseEnter={() => setHovered(r.result)}
+                onMouseLeave={() => setHovered(null)}
+                style={{ cursor: isDisc ? 'pointer' : 'default' }}
+              >
+                <path
+                  d={slicePath(i, innerR, outerR, expand)}
+                  fill={isDisc ? r.result : '#e8ddd0'}
+                  stroke="#2a1a0e"
+                  strokeWidth={isHov || isSel ? 2.5 : 1.5}
+                  style={{ transition: 'all 0.18s cubic-bezier(0.34,1.56,0.64,1)', filter: isSel ? 'brightness(1.1)' : undefined }}
+                />
+                {!isDisc && (
+                  <text
+                    x={labelPos(i).x}
+                    y={labelPos(i).y}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize="13"
+                    style={{ pointerEvents: 'none', userSelect: 'none' }}
+                  >🔒</text>
+                )}
+                {isSel && isDisc && (
+                  <circle
+                    cx={labelPos(i).x}
+                    cy={labelPos(i).y}
+                    r="6"
+                    fill="white"
+                    opacity="0.7"
+                    style={{ pointerEvents: 'none' }}
+                  />
+                )}
+              </g>
+            )
+          })}
+
+          {/* Inner ring - 5 base colors */}
+          {BASE_COLORS.map((c, i) => {
+            const isHov = hovered === c.hex
+            const isSel = currentPaint === c.hex
+            const expand = isHov ? 4 : isSel ? 3 : 0
+            return (
+              <g key={c.hex}
+                onClick={() => onSelect(c.hex)}
+                onMouseEnter={() => setHovered(c.hex)}
+                onMouseLeave={() => setHovered(null)}
+                style={{ cursor: 'pointer' }}
+              >
+                <path
+                  d={baseSlicePath(i, expand)}
+                  fill={c.hex}
+                  stroke="#2a1a0e"
+                  strokeWidth={isHov || isSel ? 2 : 1.2}
+                  style={{
+                    transition: 'all 0.18s cubic-bezier(0.34,1.56,0.64,1)',
+                    filter: c.hex === '#FFFFFF' ? undefined : isSel ? 'brightness(1.1)' : undefined
+                  }}
+                />
+              </g>
+            )
+          })}
+
+          {/* Center dot */}
+          <circle cx={cx} cy={cy} r={9} fill="#3d2b1f" stroke="#2a1a0e" strokeWidth={1} />
+        </svg>
+      </div>
+
+      {/* Hover label */}
+      <div style={{
+        minHeight: 32,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        transition: 'opacity 0.2s',
+        opacity: hoveredData ? 1 : 0,
+      }}>
+        {hoveredData && (
+          <>
+            <div style={{
+              width: 22, height: 22, borderRadius: '50%',
+              background: 'hex' in hoveredData ? hoveredData.hex : ('result' in hoveredData ? hoveredData.result : '#ccc'),
+              border: '2px solid #3d2b1f',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+              flexShrink: 0,
+            }} />
+            <span style={{
+              fontFamily: 'Baloo 2, cursive',
+              fontWeight: 700,
+              fontSize: '1rem',
+              color: '#3d2b1f',
+              background: '#fdf6e3',
+              padding: '3px 12px',
+              borderRadius: 50,
+              border: '2px solid #e0d4c0',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+            }}>
+              {'name' in hoveredData ? hoveredData.name : ''}
+              {!discovered.has('result' in hoveredData ? hoveredData.result : hoveredData.hex) ? ' 🔒' : ''}
+            </span>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
