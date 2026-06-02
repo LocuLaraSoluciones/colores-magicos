@@ -221,7 +221,8 @@ export default function GameClient({ userId, displayName, initialDiscovered }: P
             Tocá un color y luego una ranura
           </p>
           {/* Base colors */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 14 }}>
+          <p style={{ fontSize: '0.75rem', color: '#a08060', fontWeight: 700, marginBottom: 6 }}>Colores base</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 10 }}>
             {BASE_COLORS.map(c => (
               <button key={c.hex} onClick={() => setSelectedBase(c.hex)}
                 style={{
@@ -235,6 +236,26 @@ export default function GameClient({ userId, displayName, initialDiscovered }: P
               />
             ))}
           </div>
+          {/* Discovered mixed colors - also usable for mixing */}
+          {RECIPES.filter(r => discovered.has(r.result)).length > 0 && (
+            <>
+              <p style={{ fontSize: '0.75rem', color: '#a08060', fontWeight: 700, marginBottom: 6 }}>Colores descubiertos</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 14, maxHeight: 120, overflowY: 'auto' }}>
+                {RECIPES.filter(r => discovered.has(r.result)).map(r => (
+                  <button key={r.result} onClick={() => setSelectedBase(r.result)}
+                    title={r.name}
+                    style={{
+                      ...colorCircle,
+                      background: r.result,
+                      border: selectedBase === r.result ? '3px solid #3d2b1f' : '3px solid white',
+                      transform: selectedBase === r.result ? 'scale(1.15) translateY(-3px)' : undefined,
+                      boxShadow: selectedBase === r.result ? '0 0 0 3px white, 0 0 0 5px #3d2b1f, 0 4px 8px rgba(0,0,0,0.15)' : '0 3px 0 rgba(0,0,0,0.12)',
+                    }}
+                  />
+                ))}
+              </div>
+            </>
+          )}
           {/* Mix zone */}
           <div style={{ background: '#faf5ee', borderRadius: 16, padding: 14, border: '2px dashed #d4c4a8', textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, marginBottom: 12 }}>
