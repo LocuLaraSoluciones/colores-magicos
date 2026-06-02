@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import { BASE_COLORS, RECIPES, TOTAL_MIXABLE, findRecipe } from '@/lib/game-data'
+import ColoringPage from './ColoringPage'
 
 interface Props {
   userId: string
@@ -31,6 +32,7 @@ export default function GameClient({ userId, displayName, initialDiscovered }: P
   const [saving, setSaving] = useState(false)
   const [drawingTitle, setDrawingTitle] = useState('')
   const [showSaveModal, setShowSaveModal] = useState(false)
+  const [showColoring, setShowColoring] = useState(false)
 
   // Drawing state
   const isDrawing = useRef(false)
@@ -316,6 +318,7 @@ export default function GameClient({ userId, displayName, initialDiscovered }: P
               <button onClick={() => setTool('brush')} style={{ ...toolBtn, background: tool === 'brush' ? '#5a3e2b' : '#faf5ee', color: tool === 'brush' ? 'white' : '#5a3e2b', borderColor: tool === 'brush' ? '#5a3e2b' : '#d4c4a8' }}>🖌 Pincel</button>
               <button onClick={() => setTool('eraser')} style={{ ...toolBtn, background: tool === 'eraser' ? '#5a3e2b' : '#faf5ee', color: tool === 'eraser' ? 'white' : '#5a3e2b', borderColor: tool === 'eraser' ? '#5a3e2b' : '#d4c4a8' }}>🧹 Borrar</button>
               <button onClick={clearCanvas} style={{ ...toolBtn, color: '#cc4444', borderColor: '#ffb3b3' }}>🗑 Nuevo</button>
+              <button onClick={() => setShowColoring(true)} style={{ ...toolBtn, background: 'linear-gradient(135deg, #43a047, #66bb6a)', color: 'white', border: 'none', boxShadow: '0 3px 0 #2e7d32' }}>🖼 Colorear</button>
               <button onClick={() => setShowSaveModal(true)} style={{ ...toolBtn, background: 'linear-gradient(135deg, #ff6b6b, #ff8e53)', color: 'white', border: 'none', boxShadow: '0 3px 0 #cc4444' }}>💾 Guardar</button>
             </div>
           </div>
@@ -343,6 +346,19 @@ export default function GameClient({ userId, displayName, initialDiscovered }: P
       }}>
         {toast.celebrate ? `⭐ ${toast.msg} ⭐` : toast.msg}
       </div>
+
+      {/* COLORING MODAL */}
+      {showColoring && (
+        <ColoringPage
+          userId={userId}
+          currentPaint={currentPaint}
+          onClose={() => setShowColoring(false)}
+          onSave={(title, imageUrl, path) => {
+            setShowColoring(false)
+            showToast('💾 ¡Dibujo guardado!', true)
+          }}
+        />
+      )}
 
       {/* SAVE MODAL */}
       {showSaveModal && (
