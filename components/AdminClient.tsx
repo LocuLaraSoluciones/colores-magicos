@@ -246,7 +246,7 @@ export default function AdminClient({ adminName, children }: Props) {
         </div>
       )}
 
-      {/* LIGHTBOX */}}
+      {/* LIGHTBOX */}
       {lightbox && (
         <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: 20, cursor: 'pointer' }}>
           <img src={lightbox} alt="Dibujo" style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 16, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()} />
