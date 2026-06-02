@@ -16,13 +16,26 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error || !data.session) {
       setError('Email o contraseña incorrectos')
       setLoading(false)
+      return
+    }
+
+    // Leer perfil para saber a dónde redirigir
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single()
+
+    if (profile?.role === 'admin') {
+      router.replace('/admin')
     } else {
-      router.push('/dashboard')
-      router.refresh()
+      router.replace('/dashboard/game')
     }
   }
 
