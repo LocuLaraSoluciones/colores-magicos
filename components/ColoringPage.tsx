@@ -86,8 +86,8 @@ export default function ColoringPage({ userId, currentPaint, onClose, onSave }: 
     const imageData = ctx.getImageData(0, 0, W, H)
     const data = imageData.data
 
-    const px = Math.floor(startX * dpr)
-    const py = Math.floor(startY * dpr)
+    const px = Math.min(Math.floor(startX * dpr), W - 1)
+    const py = Math.min(Math.floor(startY * dpr), H - 1)
     const idx = (py * W + px) * 4
     const targetR = data[idx], targetG = data[idx+1], targetB = data[idx+2]
 
@@ -139,10 +139,19 @@ export default function ColoringPage({ userId, currentPaint, onClose, onSave }: 
   function getPos(e: React.MouseEvent | React.TouchEvent) {
     const canvas = canvasRef.current!
     const rect = canvas.getBoundingClientRect()
+    // Scale factor: canvas internal size vs displayed size
+    const scaleX = 400 / rect.width
+    const scaleY = 500 / rect.height
     if ('touches' in e) {
-      return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top }
+      return {
+        x: (e.touches[0].clientX - rect.left) * scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY,
+      }
     }
-    return { x: (e as React.MouseEvent).clientX - rect.left, y: (e as React.MouseEvent).clientY - rect.top }
+    return {
+      x: ((e as React.MouseEvent).clientX - rect.left) * scaleX,
+      y: ((e as React.MouseEvent).clientY - rect.top) * scaleY,
+    }
   }
 
   function handleStart(e: React.MouseEvent | React.TouchEvent) {
