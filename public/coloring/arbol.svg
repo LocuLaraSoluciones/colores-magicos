@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+  <rect width="400" height="500" fill="white"/>
+  <!-- Sky -->
+  <rect class="region" data-name="cielo" x="0" y="0" width="400" height="340" fill="white" stroke="#111" stroke-width="1.5"/>
+  <!-- Sun -->
+  <circle class="region" data-name="sol" cx="340" cy="60" r="38" fill="white" stroke="#111" stroke-width="2.5"/>
+  <line x1="340" y1="10" x2="340" y2="0" stroke="#111" stroke-width="2"/>
+  <line x1="340" y1="110" x2="340" y2="122" stroke="#111" stroke-width="2"/>
+  <line x1="290" y1="60" x2="278" y2="60" stroke="#111" stroke-width="2"/>
+  <line x1="390" y1="60" x2="402" y2="60" stroke="#111" stroke-width="2"/>
+  <line x1="305" y1="25" x2="296" y2="16" stroke="#111" stroke-width="2"/>
+  <line x1="375" y1="95" x2="384" y2="104" stroke="#111" stroke-width="2"/>
+  <line x1="375" y1="25" x2="384" y2="16" stroke="#111" stroke-width="2"/>
+  <line x1="305" y1="95" x2="296" y2="104" stroke="#111" stroke-width="2"/>
+  <!-- Clouds -->
+  <path class="region" data-name="nube" d="M30,80 Q42,65 58,72 Q65,55 82,62 Q90,50 105,62 Q118,56 120,75 Q132,78 128,92 Q28,97 24,86 Q21,82 30,80Z" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Ground -->
+  <rect class="region" data-name="pasto" x="0" y="380" width="400" height="120" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Mushrooms -->
+  <rect class="region" data-name="hongo1-tallo" x="52" y="410" width="16" height="22" rx="3" fill="white" stroke="#111" stroke-width="1.5"/>
+  <ellipse class="region" data-name="hongo1-cap" cx="60" cy="412" rx="22" ry="14" fill="white" stroke="#111" stroke-width="1.5"/>
+  <circle class="region" data-name="hongo1-punto1" cx="54" cy="407" r="4" fill="white" stroke="#111" stroke-width="1.2"/>
+  <circle class="region" data-name="hongo1-punto2" cx="66" cy="405" r="3" fill="white" stroke="#111" stroke-width="1.2"/>
+  <!-- Flowers -->
+  <circle class="region" data-name="flor-centro" cx="320" cy="400" r="9" fill="white" stroke="#111" stroke-width="1.5"/>
+  <ellipse class="region" data-name="flor-p1" cx="320" cy="387" rx="5" ry="9" fill="white" stroke="#111" stroke-width="1.5"/>
+  <ellipse class="region" data-name="flor-p2" cx="320" cy="413" rx="5" ry="9" fill="white" stroke="#111" stroke-width="1.5"/>
+  <ellipse class="region" data-name="flor-p3" cx="307" cy="400" rx="9" ry="5" fill="white" stroke="#111" stroke-width="1.5"/>
+  <ellipse class="region" data-name="flor-p4" cx="333" cy="400" rx="9" ry="5" fill="white" stroke="#111" stroke-width="1.5"/>
+  <line x1="320" y1="409" x2="320" y2="432" stroke="#111" stroke-width="1.5"/>
+  <!-- Tree trunk -->
+  <path class="region" data-name="tronco" d="M170,380 Q175,300 185,250 Q200,240 215,250 Q225,300 230,380Z" fill="white" stroke="#111" stroke-width="2.5"/>
+  <!-- Trunk texture lines -->
+  <path d="M188,310 Q195,305 205,308" fill="none" stroke="#111" stroke-width="1.2"/>
+  <path d="M186,330 Q196,325 207,328" fill="none" stroke="#111" stroke-width="1.2"/>
+  <path d="M185,350 Q197,345 208,348" fill="none" stroke="#111" stroke-width="1.2"/>
+  <!-- Branch left big -->
+  <path class="region" data-name="rama-izq-grande" d="M185,275 Q155,255 130,265 Q128,275 140,278 Q155,270 180,285Z" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Branch right big -->
+  <path class="region" data-name="rama-der-grande" d="M215,275 Q245,255 270,265 Q272,275 260,278 Q245,270 220,285Z" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Foliage - bottom layer -->
+  <ellipse class="region" data-name="follaje-bajo-izq" cx="148" cy="280" rx="55" ry="48" fill="white" stroke="#111" stroke-width="2.5"/>
+  <ellipse class="region" data-name="follaje-bajo-der" cx="252" cy="280" rx="55" ry="48" fill="white" stroke="#111" stroke-width="2.5"/>
+  <!-- Foliage - middle layer -->
+  <ellipse class="region" data-name="follaje-medio-izq" cx="162" cy="238" rx="52" ry="45" fill="white" stroke="#111" stroke-width="2.5"/>
+  <ellipse class="region" data-name="follaje-medio-der" cx="238" cy="238" rx="52" ry="45" fill="white" stroke="#111" stroke-width="2.5"/>
+  <!-- Foliage - top -->
+  <ellipse class="region" data-name="follaje-top" cx="200" cy="195" rx="60" ry="55" fill="white" stroke="#111" stroke-width="2.5"/>
+  <!-- Fruits/apples -->
+  <circle class="region" data-name="manzana1" cx="160" cy="210" r="14" fill="white" stroke="#111" stroke-width="2"/>
+  <path d="M160,197 Q162,190 165,192" fill="none" stroke="#111" stroke-width="1.5"/>
+  <circle class="region" data-name="manzana2" cx="240" cy="220" r="14" fill="white" stroke="#111" stroke-width="2"/>
+  <path d="M240,207 Q242,200 245,202" fill="none" stroke="#111" stroke-width="1.5"/>
+  <circle class="region" data-name="manzana3" cx="200" cy="175" r="14" fill="white" stroke="#111" stroke-width="2"/>
+  <path d="M200,162 Q202,155 205,157" fill="none" stroke="#111" stroke-width="1.5"/>
+  <!-- Bird on branch -->
+  <ellipse class="region" data-name="pajaro-cuerpo" cx="265" cy="255" rx="14" ry="10" fill="white" stroke="#111" stroke-width="1.5"/>
+  <circle class="region" data-name="pajaro-cabeza" cx="278" cy="250" r="9" fill="white" stroke="#111" stroke-width="1.5"/>
+  <path class="region" data-name="pajaro-ala" d="M260,250 Q255,238 262,242Z" fill="white" stroke="#111" stroke-width="1.5"/>
+  <path d="M285,250 L292,248 L285,252Z" fill="#111"/>
+  <circle cx="281" cy="248" r="2" fill="#111"/>
+  <!-- Tree hole -->
+  <ellipse class="region" data-name="hueco" cx="200" cy="320" rx="18" ry="22" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Title -->
+  <text x="200" y="492" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#111">🌳 Árbol Mágico 🌳</text>
+</svg>

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+  <rect width="400" height="500" fill="white"/>
+  <!-- Sky -->
+  <rect class="region" data-name="cielo" x="0" y="0" width="400" height="300" fill="white" stroke="#111" stroke-width="1.5"/>
+  <!-- Sun -->
+  <circle class="region" data-name="sol" cx="350" cy="55" r="35" fill="white" stroke="#111" stroke-width="2.5"/>
+  <line x1="350" y1="8" x2="350" y2="0" stroke="#111" stroke-width="2"/>
+  <line x1="305" y1="55" x2="295" y2="55" stroke="#111" stroke-width="2"/>
+  <line x1="317" y1="22" x2="310" y2="15" stroke="#111" stroke-width="2"/>
+  <line x1="383" y1="22" x2="390" y2="15" stroke="#111" stroke-width="2"/>
+  <!-- Clouds -->
+  <path class="region" data-name="nube" d="M30,65 Q42,50 58,57 Q65,40 82,47 Q90,35 105,47 Q118,41 120,60 Q132,63 128,77 Q28,82 24,71Z" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Kite -->
+  <path class="region" data-name="cometa" d="M180,50 L210,85 L180,120 L150,85 Z" fill="white" stroke="#111" stroke-width="2"/>
+  <line x1="180" y1="50" x2="180" y2="120" stroke="#111" stroke-width="1.5"/>
+  <line x1="150" y1="85" x2="210" y2="85" stroke="#111" stroke-width="1.5"/>
+  <path d="M180,120 Q190,145 185,165 Q175,175 188,185" fill="none" stroke="#111" stroke-width="1.5"/>
+  <ellipse class="region" data-name="cometa-lazo1" cx="193" cy="148" rx="7" ry="4" transform="rotate(30,193,148)" fill="white" stroke="#111" stroke-width="1.2"/>
+  <ellipse class="region" data-name="cometa-lazo2" cx="186" cy="170" rx="7" ry="4" transform="rotate(-20,186,170)" fill="white" stroke="#111" stroke-width="1.2"/>
+  <!-- Ground -->
+  <rect class="region" data-name="pasto" x="0" y="385" width="400" height="115" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Flowers -->
+  <circle class="region" data-name="flor1" cx="25" cy="400" r="8" fill="white" stroke="#111" stroke-width="1.5"/>
+  <ellipse class="region" data-name="flor1-p1" cx="25" cy="388" rx="4" ry="7" fill="white" stroke="#111" stroke-width="1.2"/>
+  <ellipse class="region" data-name="flor1-p2" cx="25" cy="412" rx="4" ry="7" fill="white" stroke="#111" stroke-width="1.2"/>
+  <ellipse class="region" data-name="flor1-p3" cx="13" cy="400" rx="7" ry="4" fill="white" stroke="#111" stroke-width="1.2"/>
+  <ellipse class="region" data-name="flor1-p4" cx="37" cy="400" rx="7" ry="4" fill="white" stroke="#111" stroke-width="1.2"/>
+  <circle class="region" data-name="flor2" cx="370" cy="395" r="8" fill="white" stroke="#111" stroke-width="1.5"/>
+  <ellipse class="region" data-name="flor2-p1" cx="370" cy="383" rx="4" ry="7" fill="white" stroke="#111" stroke-width="1.2"/>
+  <ellipse class="region" data-name="flor2-p2" cx="370" cy="407" rx="4" ry="7" fill="white" stroke="#111" stroke-width="1.2"/>
+  <ellipse class="region" data-name="flor2-p3" cx="358" cy="395" rx="7" ry="4" fill="white" stroke="#111" stroke-width="1.2"/>
+  <ellipse class="region" data-name="flor2-p4" cx="382" cy="395" rx="7" ry="4" fill="white" stroke="#111" stroke-width="1.2"/>
+  <!-- GIRL - left -->
+  <!-- Dress -->
+  <path class="region" data-name="nena-vestido" d="M95,295 L65,385 L130,385 Z" fill="white" stroke="#111" stroke-width="2.5"/>
+  <!-- Torso -->
+  <rect class="region" data-name="nena-torso" x="82" y="240" width="36" height="60" rx="8" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Head -->
+  <circle class="region" data-name="nena-cabeza" cx="100" cy="215" r="32" fill="white" stroke="#111" stroke-width="2.5"/>
+  <!-- Hair -->
+  <path class="region" data-name="nena-cabello" d="M68,210 Q72,178 100,172 Q128,178 132,210 Q118,190 100,192 Q82,190 68,210Z" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Pigtails -->
+  <path class="region" data-name="nena-coleta-izq" d="M68,210 Q50,205 45,228 Q52,235 65,228Z" fill="white" stroke="#111" stroke-width="1.8"/>
+  <path class="region" data-name="nena-coleta-der" d="M132,210 Q150,205 155,228 Q148,235 135,228Z" fill="white" stroke="#111" stroke-width="1.8"/>
+  <!-- Ribbon -->
+  <path class="region" data-name="nena-moño" d="M90,190 Q100,183 110,190 Q100,196 90,190Z" fill="white" stroke="#111" stroke-width="1.5"/>
+  <!-- Face -->
+  <ellipse class="region" data-name="nena-ojo-izq" cx="89" cy="213" rx="6" ry="7" fill="white" stroke="#111" stroke-width="1.8"/>
+  <ellipse cx="89" cy="214" rx="3.5" ry="4" fill="#111"/>
+  <ellipse class="region" data-name="nena-ojo-der" cx="111" cy="213" rx="6" ry="7" fill="white" stroke="#111" stroke-width="1.8"/>
+  <ellipse cx="111" cy="214" rx="3.5" ry="4" fill="#111"/>
+  <path d="M93,228 Q100,235 107,228" fill="none" stroke="#111" stroke-width="2"/>
+  <ellipse cx="85" cy="224" rx="7" ry="4" fill="white" stroke="#111" stroke-width="1" stroke-dasharray="2,2"/>
+  <ellipse cx="115" cy="224" rx="7" ry="4" fill="white" stroke="#111" stroke-width="1" stroke-dasharray="2,2"/>
+  <!-- Arms -->
+  <path class="region" data-name="nena-brazo-izq" d="M82,250 Q62,265 58,285 Q65,290 72,280 L88,262Z" fill="white" stroke="#111" stroke-width="2"/>
+  <path class="region" data-name="nena-brazo-der" d="M118,250 Q138,265 142,285 Q135,290 128,280 L112,262Z" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Shoes -->
+  <ellipse class="region" data-name="nena-zapato-izq" cx="78" cy="387" rx="16" ry="9" fill="white" stroke="#111" stroke-width="2"/>
+  <ellipse class="region" data-name="nena-zapato-der" cx="122" cy="387" rx="16" ry="9" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- BOY - right -->
+  <!-- Pants -->
+  <rect class="region" data-name="neno-pantalon-izq" x="268" y="310" width="24" height="75" rx="8" fill="white" stroke="#111" stroke-width="2"/>
+  <rect class="region" data-name="neno-pantalon-der" x="298" y="310" width="24" height="75" rx="8" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Shirt -->
+  <rect class="region" data-name="neno-remera" x="258" y="245" width="74" height="72" rx="8" fill="white" stroke="#111" stroke-width="2.5"/>
+  <!-- Head -->
+  <circle class="region" data-name="neno-cabeza" cx="295" cy="215" r="32" fill="white" stroke="#111" stroke-width="2.5"/>
+  <!-- Hair -->
+  <path class="region" data-name="neno-cabello" d="M263,205 Q268,175 295,170 Q322,175 327,205 Q315,185 295,187 Q275,185 263,205Z" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Face -->
+  <ellipse class="region" data-name="neno-ojo-izq" cx="283" cy="213" rx="6" ry="7" fill="white" stroke="#111" stroke-width="1.8"/>
+  <ellipse cx="283" cy="214" rx="3.5" ry="4" fill="#111"/>
+  <ellipse class="region" data-name="neno-ojo-der" cx="307" cy="213" rx="6" ry="7" fill="white" stroke="#111" stroke-width="1.8"/>
+  <ellipse cx="307" cy="214" rx="3.5" ry="4" fill="#111"/>
+  <path d="M287,229 Q295,237 303,229" fill="none" stroke="#111" stroke-width="2"/>
+  <ellipse cx="278" cy="224" rx="7" ry="4" fill="white" stroke="#111" stroke-width="1" stroke-dasharray="2,2"/>
+  <ellipse cx="312" cy="224" rx="7" ry="4" fill="white" stroke="#111" stroke-width="1" stroke-dasharray="2,2"/>
+  <!-- Arms -->
+  <path class="region" data-name="neno-brazo-izq" d="M258,262 Q238,278 235,300 Q242,305 250,294 L265,275Z" fill="white" stroke="#111" stroke-width="2"/>
+  <path class="region" data-name="neno-brazo-der" d="M332,262 Q352,278 355,300 Q348,305 340,294 L325,275Z" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Ball held by boy -->
+  <circle class="region" data-name="pelota" cx="360" cy="295" r="22" fill="white" stroke="#111" stroke-width="2"/>
+  <path d="M342,285 Q360,278 378,285" fill="none" stroke="#111" stroke-width="1.5"/>
+  <path d="M338,300 Q360,308 382,300" fill="none" stroke="#111" stroke-width="1.5"/>
+  <path d="M360,273 Q368,295 360,317" fill="none" stroke="#111" stroke-width="1.5"/>
+  <path d="M360,273 Q352,295 360,317" fill="none" stroke="#111" stroke-width="1.5"/>
+  <!-- Shoes boy -->
+  <ellipse class="region" data-name="neno-zapato-izq" cx="277" cy="387" rx="18" ry="9" fill="white" stroke="#111" stroke-width="2"/>
+  <ellipse class="region" data-name="neno-zapato-der" cx="313" cy="387" rx="18" ry="9" fill="white" stroke="#111" stroke-width="2"/>
+  <!-- Title -->
+  <text x="200" y="492" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#111">👧 Niños Jugando 👦</text>
+</svg>
