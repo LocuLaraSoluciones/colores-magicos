@@ -34,7 +34,7 @@ export default function ColoringPage({ userId, currentPaint, onClose, onSave }: 
   const paintCanvasRef = useRef<HTMLCanvasElement>(null)  // user strokes (transparent bg)
   const [selectedPage, setSelectedPage] = useState(PAGES[0])
   const [activeColor, setActiveColor] = useState(currentPaint ?? '#E53935')
-  const [tool, setTool] = useState<'brush' | 'eraser'>('brush')
+  const [tool, setTool] = useState<'brush' | 'eraser' | 'fill'>('brush')
   const [brushSize, setBrushSize] = useState(18)
   const [saving, setSaving] = useState(false)
   const [saveTitle, setSaveTitle] = useState('')
@@ -74,11 +74,103 @@ export default function ColoringPage({ userId, currentPaint, onClose, onSave }: 
     }
   }
 
+
+  // ---- FLOOD FILL ----
+  // Works on the paint canvas (transparent layer).
+  // We composite paint + SVG into an offscreen canvas first so the
+  // flood fill respects the SVG outlines as boundaries.
+  async function floodFill(clickX: number, clickY: number) {
+    const paintCanvas = paintCanvasRef.current!
+    const W = 400, H = 500
+
+    // Build composite: white + current paint strokes + SVG outline
+    const composite = document.createElement('canvas')
+    composite.width = W
+    composite.height = H
+    const cctx = composite.getContext('2d')!
+    cctx.fillStyle = 'white'
+    cctx.fillRect(0, 0, W, H)
+    cctx.drawImage(paintCanvas, 0, 0)
+    await new Promise<void>(resolve => {
+      const img = new Image()
+      img.onload = () => { cctx.drawImage(img, 0, 0, W, H); resolve() }
+      img.onerror = () => resolve()
+      img.src = `/coloring/${selectedPage.id}.svg`
+    })
+
+    const imageData = cctx.getImageData(0, 0, W, H)
+    const data = imageData.data
+    const px = Math.max(0, Math.min(W - 1, Math.floor(clickX)))
+    const py = Math.max(0, Math.min(H - 1, Math.floor(clickY)))
+    const startIdx = (py * W + px) * 4
+    const tR = data[startIdx], tG = data[startIdx + 1], tB = data[startIdx + 2]
+
+    // Don't fill dark outlines
+    if (tR < 80 && tG < 80 && tB < 80) return
+
+    const [fR, fG, fB] = hexToRgb(activeColor)
+    // Already same color
+    if (tR === fR && tG === fG && tB === fB) return
+
+    const tolerance = 35
+    function matches(i: number) {
+      return Math.abs(data[i] - tR) <= tolerance &&
+             Math.abs(data[i+1] - tG) <= tolerance &&
+             Math.abs(data[i+2] - tB) <= tolerance
+    }
+
+    // BFS flood fill on composite, then apply result to paint canvas
+    const visited = new Uint8Array(W * H)
+    const queue: number[] = [py * W + px]
+    visited[py * W + px] = 1
+    const filled: number[] = []
+
+    while (queue.length) {
+      const pos = queue.shift()!
+      filled.push(pos)
+      const x = pos % W, y = Math.floor(pos / W)
+      const neighbors = [
+        x > 0 ? pos - 1 : -1,
+        x < W - 1 ? pos + 1 : -1,
+        y > 0 ? pos - W : -1,
+        y < H - 1 ? pos + W : -1,
+      ]
+      for (const n of neighbors) {
+        if (n >= 0 && !visited[n] && matches(n * 4)) {
+          visited[n] = 1
+          queue.push(n)
+        }
+      }
+    }
+
+    // Apply filled pixels to the PAINT canvas
+    const paintCtx = paintCanvas.getContext('2d')!
+    const paintData = paintCtx.getImageData(0, 0, W, H)
+    const pd = paintData.data
+    for (const pos of filled) {
+      const i = pos * 4
+      pd[i] = fR; pd[i+1] = fG; pd[i+2] = fB; pd[i+3] = 255
+    }
+    paintCtx.putImageData(paintData, 0, 0)
+  }
+
+  function hexToRgb(hex: string): [number, number, number] {
+    return [
+      parseInt(hex.slice(1, 3), 16),
+      parseInt(hex.slice(3, 5), 16),
+      parseInt(hex.slice(5, 7), 16),
+    ]
+  }
+
   function startDraw(e: React.MouseEvent | React.TouchEvent) {
     e.preventDefault()
+    const pos = getPos(e)
+    if (tool === 'fill') {
+      floodFill(pos.x, pos.y)
+      return
+    }
     const canvas = paintCanvasRef.current!
     const ctx = canvas.getContext('2d')!
-    const pos = getPos(e)
     isDrawing.current = true
     lastPos.current = pos
     ctx.beginPath()
@@ -213,7 +305,7 @@ export default function ColoringPage({ userId, currentPaint, onClose, onSave }: 
                 style={{
                   position: 'absolute', top: 0, left: 0,
                   width: '100%', height: '100%',
-                  cursor: tool === 'eraser' ? 'cell' : 'crosshair',
+                  cursor: tool === 'fill' ? 'copy' : tool === 'eraser' ? 'cell' : 'crosshair',
                   touchAction: 'none',
                 }}
                 onMouseDown={startDraw}
@@ -251,10 +343,11 @@ export default function ColoringPage({ userId, currentPaint, onClose, onSave }: 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#7a5c4a', marginBottom: 2, textAlign: 'center' }}>Herramienta</div>
               {[
+                { id: 'fill', label: '🪣 Balde' },
                 { id: 'brush', label: '🖌 Pincel' },
                 { id: 'eraser', label: '🧹 Borrar' },
               ].map(t => (
-                <button key={t.id} onClick={() => setTool(t.id as 'brush' | 'eraser')}
+                <button key={t.id} onClick={() => setTool(t.id as 'brush' | 'eraser' | 'fill')}
                   style={{ background: tool === t.id ? '#5a3e2b' : '#faf5ee', color: tool === t.id ? 'white' : '#5a3e2b', border: '2px solid', borderColor: tool === t.id ? '#5a3e2b' : '#d4c4a8', borderRadius: 10, padding: '7px 3px', fontFamily: 'Nunito, sans-serif', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
                   {t.label}
                 </button>
